@@ -10,7 +10,6 @@
  * The menu, team and gallery live in their own files:
  *   src/content/menu.json · src/content/team.json · src/content/gallery.json
  */
-import coldBrew from '../assets/photos/food-coldbrew.jpg';
 import croissant from '../assets/photos/food-croissant.jpg';
 import khichuri from '../assets/photos/food-khichuri.jpg';
 import shorshe from '../assets/photos/food-shorshe.jpg';
@@ -150,7 +149,6 @@ export const HOME = {
     {name: 'Mishti Doi Cheesecake', price: 350},
     {name: 'Cold Brew with Date Molasses', price: 320},
   ],
-  coldBrew: {image: coldBrew, alt: 'An iced coffee in a tall glass, cream swirling into it, on a wooden counter.'},
   /** EDIT: replace with real guest quotes, then set `sample: false`. */
   reviews: [
     {
