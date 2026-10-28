@@ -15,14 +15,20 @@ const {tag} = Astro.props;
 const count = tag.posts.length;
 ---
 
-<Base title={`Posts tagged #${tag.label}`} description={`${count} ${count === 1 ? 'post' : 'posts'} tagged #${tag.label}.`}>
-  <section class="wrap section">
-    <p class="eyebrow"><a href="/blog/">Blog</a></p>
-    <h1>#{tag.label}</h1>
-    <p class="lede">{count} {count === 1 ? 'post' : 'posts'}.</p>
-    <div class="grid grid-3">
-      {tag.posts.map((post, i) => <PostCard post={post} as="h2" eager={i < 3} />)}
-    </div>
-    <p><a href="/blog/">← All posts</a></p>
+<Base title={`News: ${tag.label}`} description={`${count} ${count === 1 ? 'story' : 'stories'} from Muddassir’s Café about ${tag.label}.`}>
+  <header class="wrap page-head">
+    <p><a href="/blog/">News</a></p>
+    <h1>{tag.label}</h1>
+    <p class="lede">{count} {count === 1 ? 'story' : 'stories'}.</p>
+  </header>
+  <section class="wrap" aria-label={`News about ${tag.label}`}>
+    <ul class="post-list">
+      {tag.posts.map((post, i) => (
+        <li>
+          <PostCard post={post} as="h2" eager={i < 3} />
+        </li>
+      ))}
+    </ul>
+    <p class="section-tight"><a href="/blog/">← All news</a></p>
   </section>
 </Base>

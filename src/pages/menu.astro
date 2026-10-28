@@ -1,0 +1,260 @@
+---
+/**
+ * The menu, built from src/content/menu.json: five sections, each led by its
+ * Chef's Pick. Dishes marked `sample: true` show a "sample" flag in the
+ * Preview (npm run dev) only, so the owner can see what still needs checking.
+ */
+import {Picture} from 'astro:assets';
+import {getCollection} from 'astro:content';
+
+import BookBlock from '../components/BookBlock.astro';
+import DietTags from '../components/DietTags.astro';
+import Base from '../layouts/Base.astro';
+
+const SECTIONS = [
+  {id: 'breakfast', title: 'Breakfast', blurb: 'Served from opening until noon (from 2 PM on Fridays, while it lasts).'},
+  {id: 'mains', title: 'All-day mains', blurb: 'Bowls, plates and sandwiches, all day.'},
+  {id: 'drinks', title: 'Coffee & drinks', blurb: 'Espresso from a Dhaka roaster, plus tea, coolers and lime.'},
+  {id: 'bakes', title: 'Bakes & desserts', blurb: 'Baked here every morning. The croissants come out at 11.'},
+  {id: 'sides', title: 'Sides', blurb: 'For sharing, or for when the main wasn’t quite enough.'},
+] as const;
+
+const dishes = await getCollection('menu');
+const sections = SECTIONS.map(section => {
+  const items = dishes.filter(d => d.data.section === section.id);
+  return {...section, pick: items.find(d => d.data.chefsPick), rest: items.filter(d => !d.data.chefsPick)};
+});
+const taka = (n: number) => `BDT ${n.toLocaleString('en-US')}`;
+const showSample = import.meta.env.DEV;
+---
+
+<Base title="Menu" description="The menu at Muddassir’s Café, Dhanmondi: Bengali-fusion breakfasts and mains, specialty coffee, fresh bakes and sides, with prices in taka and dietary tags.">
+  <header class="wrap page-head">
+    <h1>The menu</h1>
+    <p class="lede">Bengali home cooking meets the café counter. Prices in taka, VAT included.</p>
+    <ul class="legend" aria-label="What the tags mean">
+      <li><DietTags tags={['veg']} /></li>
+      <li><DietTags tags={['spicy']} /></li>
+      <li><DietTags tags={['gf']} /></li>
+    </ul>
+    <p class="small muted">Tags are a guide. Our kitchen handles nuts, gluten, dairy and mustard, so tell us about any allergy when you order.</p>
+  </header>
+
+  <nav class="menu-jump" aria-label="Menu sections">
+    <ul class="wrap">
+      {
+        sections.map(s => (
+          <li>
+            <a href={`#${s.id}`}>{s.title}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  {
+    sections.map(section => (
+      <section id={section.id} class="menu-section wrap" aria-labelledby={`${section.id}-title`}>
+        <div class="menu-section-head">
+          <h2 id={`${section.id}-title`}>{section.title}</h2>
+          <p class="muted">{section.blurb}</p>
+        </div>
+
+        {section.pick && (
+          <article class:list={['pick', {'has-photo': section.pick.data.photo}]} aria-labelledby={`${section.pick.id}-name`}>
+            {section.pick.data.photo && (
+              <Picture
+                src={section.pick.data.photo}
+                alt={section.pick.data.photoAlt}
+                formats={['avif', 'webp']}
+                widths={[400, 700, 1000]}
+                sizes="(min-width: 52rem) 420px, calc(100vw - 32px)"
+              />
+            )}
+            <div class="pick-body">
+              <p class="hand pick-note">Chef’s pick</p>
+              <h3 id={`${section.pick.id}-name`}>{section.pick.data.name}</h3>
+              <p>{section.pick.data.description}</p>
+              <p class="price">
+                {taka(section.pick.data.price)} {showSample && section.pick.data.sample && <span class="sample-flag">sample</span>}
+              </p>
+              <DietTags tags={section.pick.data.tags} />
+            </div>
+          </article>
+        )}
+
+        <ul class="dishes">
+          {section.rest.map(dish => (
+            <li class="dish">
+              <div class="dish-line">
+                <h3>{dish.data.name}</h3>
+                <span class="leader-dots" aria-hidden="true" />
+                <span class="price">{taka(dish.data.price)}</span>
+              </div>
+              <p class="dish-desc">
+                {dish.data.description} {showSample && dish.data.sample && <span class="sample-flag">sample</span>}
+              </p>
+              <DietTags tags={dish.data.tags} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  <BookBlock title="Hungry already?" body="Book a table, or just walk in: we keep the counter seats for drop-ins." />
+</Base>
+
+<style>
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    margin: var(--space-lg) 0 var(--space-xs);
+    padding: 0;
+    list-style: none;
+  }
+
+  .legend :global(.diet) {
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+    margin: 0;
+  }
+
+  .menu-jump {
+    position: sticky;
+    top: 68px;
+    z-index: 10;
+    background: var(--color-paper);
+    border-block: var(--rule-hair);
+  }
+
+  .menu-jump ul {
+    display: flex;
+    gap: var(--space-lg);
+    margin-inline: auto;
+    padding: 0;
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .menu-jump a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    color: var(--color-ink-2);
+    text-decoration: none;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .menu-jump a:hover {
+    color: var(--color-accent-deep);
+  }
+
+  .menu-section {
+    padding-block: var(--space-3xl) var(--space-xl);
+    scroll-margin-top: 120px;
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .menu-section-head h2 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .menu-section-head p {
+    margin: 0;
+  }
+
+  .pick {
+    display: grid;
+    gap: var(--space-lg);
+    background: var(--color-paper-2);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    align-items: center;
+  }
+
+  .pick :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+  }
+
+  .pick-note {
+    font-size: var(--text-xl);
+    margin: 0;
+    transform: rotate(-2deg);
+    transform-origin: left;
+  }
+
+  .pick h3 {
+    font-size: var(--text-2xl);
+    margin: var(--space-2xs) 0 var(--space-xs);
+  }
+
+  .pick-body p {
+    max-width: 44ch;
+  }
+
+  .pick .price {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-xs);
+  }
+
+  @media (min-width: 52rem) {
+    .pick.has-photo {
+      grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+      gap: var(--space-2xl);
+    }
+  }
+
+  .dishes {
+    display: grid;
+    gap: 0 var(--space-3xl);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 52rem) {
+    .dishes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .dish {
+    padding-block: var(--space-md);
+    border-bottom: var(--rule-hair);
+  }
+
+  .dish-line {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+  }
+
+  .dish h3 {
+    font-size: var(--text-lg);
+    margin: 0;
+    min-width: 0;
+  }
+
+  .leader-dots {
+    flex: 1;
+    min-width: var(--space-md);
+    border-bottom: 2px dotted var(--color-rule-strong);
+    transform: translateY(-0.3em);
+  }
+
+  .dish-desc {
+    margin: var(--space-2xs) 0 0;
+    color: var(--color-ink-2);
+    font-size: var(--text-sm);
+    max-width: 52ch;
+  }
+</style>

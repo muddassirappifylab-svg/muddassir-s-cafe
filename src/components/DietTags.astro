@@ -1,0 +1,57 @@
+---
+/** Dietary tags on a dish: a small icon AND the word (never the icon alone). */
+type Tag = 'veg' | 'spicy' | 'gf';
+
+interface Props {
+  tags: Tag[];
+}
+
+const {tags} = Astro.props;
+const LABELS: Record<Tag, string> = {veg: 'Vegetarian', spicy: 'Spicy', gf: 'Gluten-free'};
+---
+
+{
+  tags.length > 0 && (
+    <ul class="diet" aria-label="Dietary information">
+      {tags.map(tag => (
+        <li class={`diet-${tag}`}>
+          <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            {tag === 'veg' && <path d="M3 13c0-6 4-10 10-10 0 6-4 10-10 10zM3 13l6-6" />}
+            {tag === 'spicy' && <path d="M10.5 4.5c1.8.4 3 2 2.6 4.2C12.4 12 8 14 3 13.5c3.5-1.3 5.3-4 5.6-7.2.2-1.3 1-2 1.9-1.8zM10.5 4.5c0-1.2.6-2.2 1.8-2.6" />}
+            {tag === 'gf' && <path d="M8 14V6M8 6c-1.5 0-2.5-1-2.5-2.5C7 3.5 8 4.5 8 6zm0 0c1.5 0 2.5-1 2.5-2.5C9 3.5 8 4.5 8 6zM8 10c-1.5 0-2.5-1-2.5-2.5C7 7.5 8 8.5 8 10zm0 0c1.5 0 2.5-1 2.5-2.5C9 7.5 8 8.5 8 10zM2.5 13.5l11-11" />}
+          </svg>
+          {LABELS[tag]}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .diet {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+    margin: var(--space-2xs) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .diet-spicy svg {
+    color: var(--color-accent-deep);
+  }
+</style>

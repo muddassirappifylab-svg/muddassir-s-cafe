@@ -1,0 +1,319 @@
+---
+/**
+ * Events & private dining: the private room (capacity, price tiers), the
+ * recurring evenings and an enquiry form. The form cannot be received by a
+ * static site: it opens a ready-to-send email or WhatsApp message
+ * (src/scripts/mailto-form.ts). Words in EVENTS in src/content/site.ts.
+ */
+import {Picture} from 'astro:assets';
+
+import brunch from '../assets/photos/food-brunch.jpg';
+import guitar from '../assets/photos/events-guitar.jpg';
+import longTable from '../assets/photos/people-long-table.jpg';
+import tasting from '../assets/photos/events-tasting.jpg';
+import {CAFE, EVENTS} from '../content/site';
+import Base from '../layouts/Base.astro';
+
+const recurringPhotos = [
+  {src: guitar, alt: 'Hands playing an acoustic guitar.'},
+  {src: brunch, alt: 'A brunch spread of waffles, fruit, eggs and coffee across a table.'},
+  {src: tasting, alt: 'A small plated course on a candlelit table set for a tasting dinner.'},
+];
+const showSample = import.meta.env.DEV;
+---
+
+<Base title="Events & private dining" description={EVENTS.description}>
+  <header class="wrap page-head">
+    <h1>{EVENTS.title}</h1>
+    <p class="lede">{EVENTS.lede}</p>
+    <div class="actions">
+      <a class="button" href="#enquire">Enquire about a date</a>
+    </div>
+  </header>
+
+  <section class="wrap room" aria-labelledby="room-title">
+    <Picture
+      src={longTable}
+      alt="A long table of guests eating and talking at a private dinner."
+      formats={['avif', 'webp']}
+      widths={[480, 800, 1200]}
+      sizes="(min-width: 60rem) 560px, calc(100vw - 32px)"
+      loading="eager"
+    />
+    <div>
+      <h2 id="room-title">The private dining room</h2>
+      <dl class="capacity">
+        <div>
+          <dt>Seated</dt>
+          <dd class="tabular">{EVENTS.room.seated}</dd>
+        </div>
+        <div>
+          <dt>Standing</dt>
+          <dd class="tabular">{EVENTS.room.standing}</dd>
+        </div>
+      </dl>
+      <ul class="room-details">
+        {EVENTS.room.details.map(d => <li>{d}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="tiers-title">
+    <h2 id="tiers-title">Ways to book the room</h2>
+    {showSample && <p><span class="sample-flag">sample prices: confirm in site.ts</span></p>}
+    <ul class="tiers">
+      {
+        EVENTS.room.tiers.map(tier => (
+          <li>
+            <h3>{tier.name}</h3>
+            <p class="price">{tier.price}</p>
+            <p class="tier-body">{tier.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="recurring" aria-labelledby="recurring-title">
+    <div class="wrap section">
+      <h2 id="recurring-title">On the calendar every month</h2>
+      <ul class="recurring-list">
+        {
+          EVENTS.recurring.map((event, i) => (
+            <li class="event">
+              <Picture src={recurringPhotos[i].src} alt={recurringPhotos[i].alt} formats={['avif', 'webp']} widths={[400, 700, 1000]} sizes="(min-width: 52rem) 50vw, calc(100vw - 32px)" />
+              <div class="event-body">
+                <h3>{event.name}</h3>
+                <p class="when">{event.when}</p>
+                <p>{event.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section id="enquire" class="wrap section enquire" aria-labelledby="enquire-title">
+    <div class="enquire-intro">
+      <h2 id="enquire-title">Enquire about a date</h2>
+      <p>Tell us the date, how many guests and what you’re celebrating. We’ll come back with availability and a suggested menu, usually the same day.</p>
+      <p class="muted small">Prefer to talk? Call <a href={CAFE.phoneHref}>{CAFE.phone}</a> and ask for the events team.</p>
+    </div>
+
+    <form
+      class="form"
+      action={`mailto:${CAFE.email}?subject=${encodeURIComponent('Private dining enquiry')}`}
+      method="post"
+      enctype="text/plain"
+      data-mailto={CAFE.email}
+      data-whatsapp={CAFE.whatsapp}
+      data-subject="Private dining enquiry"
+    >
+      <div class="form-row">
+        <div class="field">
+          <label for="ev-date">Date <span class="req" aria-hidden="true">*</span></label>
+          <input id="ev-date" name="Date" type="date" required aria-describedby="ev-date-error" data-required="Choose the date you have in mind." />
+          <p id="ev-date-error" class="error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="ev-guests">Number of guests <span class="req" aria-hidden="true">*</span></label>
+          <input id="ev-guests" name="Guests" type="number" inputmode="numeric" min="2" max="60" required aria-describedby="ev-guests-hint ev-guests-error" data-required="Tell us roughly how many guests." />
+          <p id="ev-guests-hint" class="hint">The room seats {EVENTS.room.seated}; for more, ask about the whole café.</p>
+          <p id="ev-guests-error" class="error" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="field">
+        <label for="ev-occasion">Occasion <span class="req" aria-hidden="true">*</span></label>
+        <select id="ev-occasion" name="Occasion" required aria-describedby="ev-occasion-error" data-required="Pick the occasion, or Something else.">
+          <option value="">Choose one</option>
+          {EVENTS.occasions.map(o => <option>{o}</option>)}
+        </select>
+        <p id="ev-occasion-error" class="error" aria-live="polite"></p>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="ev-name">Your name <span class="req" aria-hidden="true">*</span></label>
+          <input id="ev-name" name="Name" type="text" autocomplete="name" required data-sender aria-describedby="ev-name-error" data-required="Tell us who to reply to." />
+          <p id="ev-name-error" class="error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="ev-phone">Phone or WhatsApp <span class="req" aria-hidden="true">*</span></label>
+          <input id="ev-phone" name="Phone" type="tel" autocomplete="tel" required aria-describedby="ev-phone-error" data-required="Add a number we can reach you on." />
+          <p id="ev-phone-error" class="error" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="field">
+        <label for="ev-notes">Anything else? <span class="muted">(optional)</span></label>
+        <textarea id="ev-notes" name="Notes" rows="4" aria-describedby="ev-notes-hint ev-notes-error"></textarea>
+        <p id="ev-notes-hint" class="hint">Dietary needs, a cake, a time, a budget.</p>
+        <p id="ev-notes-error" class="error" aria-live="polite"></p>
+      </div>
+      <p class="small muted"><span class="req" aria-hidden="true">*</span> Required. Sending opens your email or WhatsApp with the details filled in; nothing is stored on this website.</p>
+      <div class="actions">
+        <button class="button" type="submit" value="email">Send by email</button>
+        <button class="button ghost" type="submit" value="whatsapp" hidden data-js-only>Send on WhatsApp</button>
+      </div>
+      <p class="form-status" role="status"></p>
+    </form>
+  </section>
+</Base>
+
+<script>
+  import '../scripts/mailto-form';
+</script>
+
+<style>
+  .room {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  .room :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  @media (min-width: 60rem) {
+    .room {
+      grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+      gap: var(--space-3xl);
+    }
+  }
+
+  .capacity {
+    display: flex;
+    gap: var(--space-2xl);
+    margin: var(--space-lg) 0;
+  }
+
+  .capacity dt {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+  }
+
+  .capacity dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    line-height: 1;
+    color: var(--color-accent-deep);
+  }
+
+  .room-details {
+    margin: 0;
+    padding-left: 1.1em;
+    color: var(--color-ink-2);
+  }
+
+  .room-details li + li {
+    margin-top: var(--space-xs);
+  }
+
+  .tiers {
+    margin: var(--space-lg) 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--color-ink);
+  }
+
+  .tiers li {
+    display: grid;
+    gap: var(--space-2xs) var(--space-lg);
+    padding-block: var(--space-lg);
+    border-bottom: var(--rule-hair);
+  }
+
+  .tiers h3 {
+    margin: 0;
+  }
+
+  .tiers .price {
+    margin: 0;
+    color: var(--color-accent-deep);
+  }
+
+  .tier-body {
+    margin: 0;
+    color: var(--color-ink-2);
+  }
+
+  @media (min-width: 52rem) {
+    .tiers li {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.8fr);
+      align-items: baseline;
+    }
+  }
+
+  .recurring {
+    background: var(--color-paper-2);
+  }
+
+  .recurring-list {
+    display: grid;
+    gap: var(--space-3xl);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .event {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .event :global(img) {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  .event h3 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .when {
+    font-weight: 600;
+    color: var(--color-accent-deep);
+  }
+
+  .event-body p:last-child {
+    margin: 0;
+    max-width: 46ch;
+    color: var(--color-ink-2);
+  }
+
+  @media (min-width: 52rem) {
+    .event {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3xl);
+    }
+
+    .event:nth-child(even) :global(picture) {
+      order: 2;
+    }
+  }
+
+  .enquire {
+    display: grid;
+    gap: var(--space-xl);
+    scroll-margin-top: 80px;
+  }
+
+  .enquire-intro p {
+    max-width: 44ch;
+  }
+
+  @media (min-width: 60rem) {
+    .enquire {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+      gap: var(--space-3xl);
+    }
+  }
+</style>

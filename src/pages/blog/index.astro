@@ -1,11 +1,13 @@
 ---
 /**
- * The blog list, built from the Markdown files in `src/content/blog/`.
+ * News (the blog), built from the Markdown files in `src/content/blog/`.
  * Prerendered like every page: a new post goes live with the next Publish.
  * Lists every post on one page; past ~30 posts, page it with Astro's
  * `paginate()` (`/blog/2/`…), keeping this page as page 1.
  */
+import BookBlock from '../../components/BookBlock.astro';
 import PostCard from '../../components/PostCard.astro';
+import {NEWS} from '../../content/site';
 import Base from '../../layouts/Base.astro';
 import {publishedPosts, tagHref, tagsOf} from '../../lib/posts';
 
@@ -13,33 +15,39 @@ const posts = await publishedPosts();
 const tags = tagsOf(posts);
 ---
 
-<Base title="Blog" description="Stories, guides and updates.">
-  <section class="wrap section">
-    <h1>Blog</h1>
-    <p class="lede">Stories, guides and updates.</p>
+<Base title={NEWS.title} description={NEWS.description}>
+  <header class="wrap page-head">
+    <h1>{NEWS.title}</h1>
+    <p class="lede">{NEWS.lede}</p>
     {
-      tags.length > 0 && (
+      tags.length > 1 && (
         <nav aria-label="Topics">
           <ul class="chips">
             {tags.map(tag => (
               <li>
-                <a class="chip" href={tagHref(tag.label)}>#{tag.label}</a>
+                <a class="chip" href={tagHref(tag.label)}>{tag.label}</a>
               </li>
             ))}
           </ul>
         </nav>
       )
     }
+  </header>
+  <section class="wrap" aria-label="All news">
     {
       posts.length ? (
-        <div class="grid grid-3">
+        <ul class="post-list">
           {posts.map((post, i) => (
-            <PostCard post={post} as="h2" eager={i < 3} />
+            <li>
+              <PostCard post={post} as="h2" eager={i < 3} />
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <p class="muted">No posts yet. Check back soon.</p>
+        <p class="muted">No news yet. Check back soon.</p>
       )
     }
   </section>
+  <div class="section-tight"></div>
+  <BookBlock />
 </Base>

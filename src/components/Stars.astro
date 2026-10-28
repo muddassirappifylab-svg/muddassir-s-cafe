@@ -1,0 +1,40 @@
+---
+/** A star rating out of five: drawn stars for the eye, the number in words for screen readers. */
+interface Props {
+  value: number;
+}
+
+const {value} = Astro.props;
+---
+
+<span class="stars" role="img" aria-label={`${value} out of 5 stars`}>
+  {
+    [1, 2, 3, 4, 5].map(n => (
+      <svg viewBox="0 0 20 20" aria-hidden="true" class={n <= value ? 'on' : 'off'}>
+        <path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z" />
+      </svg>
+    ))
+  }
+</span>
+
+<style>
+  .stars {
+    display: inline-flex;
+    gap: 2px;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .on {
+    fill: var(--color-accent);
+  }
+
+  .off {
+    fill: none;
+    stroke: var(--color-rule-strong);
+    stroke-width: 1.2;
+  }
+</style>

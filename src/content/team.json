@@ -1,0 +1,6 @@
+[
+  {"id": "muddassir", "name": "Muddassir", "role": "Founder", "fact": "Still pulls the first espresso of the day, every day, before the doors open.", "photo": "../assets/photos/team-muddassir.jpg", "photoAlt": "Portrait of Muddassir, smiling, in a white T-shirt."},
+  {"id": "rafiq", "name": "Rafiq", "role": "Head chef", "fact": "Tested the khichuri risotto on staff lunches for two months before it went on the menu.", "photo": "../assets/photos/team-chef.jpg", "photoAlt": "Portrait of Rafiq in a chef’s jacket and hat, in the dining room."},
+  {"id": "nabila", "name": "Nabila", "role": "Pastry lead", "fact": "Makes the mishti doi for the cheesecake herself, in clay pots, every other morning.", "photo": "../assets/photos/team-pastry.jpg", "photoAlt": "Portrait of Nabila laughing, in a red sweater."},
+  {"id": "tanvir", "name": "Tanvir", "role": "Head barista", "fact": "Can tell you which regulars want their latte with one cardamom pod and which want two.", "photo": "../assets/photos/team-barista.jpg", "photoAlt": "Portrait of Tanvir in a grey jumper and collared shirt."}
+]

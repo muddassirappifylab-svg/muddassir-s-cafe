@@ -1,0 +1,28 @@
+[
+  {"id": "shorshe-ilish-toast", "section": "breakfast", "name": "Shorshe Ilish Toast", "description": "Hilsa in mustard paste and green chilli on toasted sourdough, with a soft egg.", "price": 420, "tags": ["spicy"], "chefsPick": true, "photo": "../assets/photos/food-shorshe.jpg", "photoAlt": "Fish fillets in a bright mustard sauce with lemon slices and herbs, in a black pan."},
+  {"id": "paratha-egg-plate", "section": "breakfast", "name": "Paratha & Egg Bhaji Plate", "description": "Flaky paratha, onion-chilli egg bhaji and a cup of dudh cha.", "price": 260, "tags": ["veg", "spicy"], "sample": true},
+  {"id": "chira-doi-bowl", "section": "breakfast", "name": "Chira-Doi Granola Bowl", "description": "Toasted flattened rice, sweet yoghurt, banana, jaggery and nuts.", "price": 290, "tags": ["veg", "gf"], "sample": true},
+  {"id": "masala-omelette", "section": "breakfast", "name": "Masala Omelette on Sourdough", "description": "Three-egg omelette with tomato, coriander and green chilli, buttered toast.", "price": 310, "tags": ["veg", "spicy"], "sample": true},
+
+  {"id": "khichuri-risotto", "section": "mains", "name": "Khichuri Risotto Bowl", "description": "Rice and moong dal cooked slow with ghee, topped with crisp onions and a fried egg on request.", "price": 480, "tags": ["veg", "gf"], "chefsPick": true, "photo": "../assets/photos/food-khichuri.jpg", "photoAlt": "A creamy rice dish in a wide white bowl, scattered with herbs."},
+  {"id": "beef-tehari-bowl", "section": "mains", "name": "Beef Tehari Grain Bowl", "description": "Mustard-oil tehari rice, tender beef, pickled onions and a boiled egg.", "price": 520, "tags": ["spicy", "gf"], "sample": true},
+  {"id": "chingri-linguine", "section": "mains", "name": "Chingri Malaikari Linguine", "description": "Prawns in a coconut-milk malaikari sauce, tossed with linguine.", "price": 650, "tags": [], "sample": true},
+  {"id": "mustard-paneer-sandwich", "section": "mains", "name": "Mustard Paneer Sandwich", "description": "Grilled paneer, kasundi mayo and pickled cucumber on a toasted bun, with salad.", "price": 360, "tags": ["veg", "spicy"], "sample": true},
+
+  {"id": "cardamom-latte", "section": "drinks", "name": "Muddassir’s Signature Cardamom Latte", "description": "Our house espresso with milk steamed with green cardamom and a little jaggery.", "price": 280, "tags": ["veg", "gf"], "chefsPick": true, "photo": "../assets/photos/food-latte.jpg", "photoAlt": "A latte with a leaf of foam art in a glass cup, on a wooden table."},
+  {"id": "cold-brew-date", "section": "drinks", "name": "Cold Brew with Date Molasses", "description": "Eighteen-hour cold brew sweetened with khejur gur, over ice.", "price": 320, "tags": ["veg", "gf"]},
+  {"id": "flat-white", "section": "drinks", "name": "Flat White", "description": "A double ristretto with a little silky milk.", "price": 240, "tags": ["veg", "gf"], "sample": true},
+  {"id": "masala-chai", "section": "drinks", "name": "Masala Chai in a Clay Cup", "description": "Strong tea boiled with ginger, cardamom and milk, served in a bhaar.", "price": 150, "tags": ["veg", "gf"], "sample": true},
+  {"id": "green-mango-cooler", "section": "drinks", "name": "Green Mango & Kasundi Cooler", "description": "Sour green mango, a pinch of mustard and black salt, soda.", "price": 220, "tags": ["veg", "gf", "spicy"], "sample": true},
+  {"id": "lebu-pani", "section": "drinks", "name": "Lebu Pani with Mint", "description": "Fresh lime, mint and a little sugar, still or sparkling.", "price": 180, "tags": ["veg", "gf"], "sample": true},
+
+  {"id": "mishti-doi-cheesecake", "section": "bakes", "name": "Mishti Doi Cheesecake", "description": "Baked cheesecake made with caramelised sweet yoghurt on a biscuit base.", "price": 350, "tags": ["veg"], "chefsPick": true, "photo": "../assets/photos/food-cheesecake.jpg", "photoAlt": "A slice of pale baked cheesecake on a dark plate, with a fork."},
+  {"id": "beef-bhuna-croissant", "section": "bakes", "name": "Beef Bhuna Croissant", "description": "A butter croissant filled with slow-cooked beef bhuna.", "price": 390, "tags": ["spicy"]},
+  {"id": "nolen-gur-bun", "section": "bakes", "name": "Nolen Gur Cinnamon Bun", "description": "Soft bun rolled with date-palm jaggery and cinnamon. Winter only.", "price": 260, "tags": ["veg"], "sample": true},
+  {"id": "pistachio-sandesh-cookie", "section": "bakes", "name": "Pistachio Sandesh Cookie", "description": "Shortbread with a sandesh-and-pistachio centre.", "price": 140, "tags": ["veg"], "sample": true},
+
+  {"id": "aloo-bhorta-fries", "section": "sides", "name": "Aloo Bhorta Fries", "description": "Crisp potato wedges tossed in mustard oil, burnt chilli and onion.", "price": 220, "tags": ["veg", "spicy", "gf"], "chefsPick": true, "sample": true},
+  {"id": "begun-bhaja", "section": "sides", "name": "Begun Bhaja with Kasundi Mayo", "description": "Turmeric-fried aubergine rounds, mustard mayo for dipping.", "price": 200, "tags": ["veg", "gf"], "sample": true},
+  {"id": "dal-soup", "section": "sides", "name": "Dal Soup Cup", "description": "Masoor dal with a garlic and cumin tarka.", "price": 160, "tags": ["veg", "gf"], "sample": true},
+  {"id": "garlic-naan-toast", "section": "sides", "name": "Garlic Naan Toast", "description": "Tandoor naan brushed with garlic butter and coriander.", "price": 120, "tags": ["veg"], "sample": true}
+]

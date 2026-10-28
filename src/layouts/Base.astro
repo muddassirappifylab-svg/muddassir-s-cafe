@@ -5,21 +5,25 @@
  * The only scripts are Astro's own, deferred modules from this host: prefetch
  * (`prefetch` in astro.config.mjs: a link the visitor points at is fetched
  * ahead) and client navigation (`<ClientRouter />`: a click swaps the next
- * page in without a reload and announces its title to screen readers). Every
- * page stays a real prerendered HTML file, so search sees the same pages.
+ * page in without a reload and announces its title to screen readers), plus
+ * the two small page scripts in src/scripts/ on the pages that use them.
  *
  * SEO for every page comes from the props: a unique `title` + `description`,
  * a canonical URL and `og:url` (when the site's address is known,
  * src/lib/site-url.ts), Open Graph + Twitter card tags, and links to the RSS
  * feed and the sitemap. Structured data (JSON-LD, src/lib/json-ld.ts): the
  * home page gets `WebSite` + `Organization`, a page passes its own in `jsonLd`
- * (a post's `BlogPosting`).
+ * (a post's `BlogPosting`, the café's `CafeOrCoffeeShop`).
+ *
+ * The header: a thin line with the address, hours and phone, then a sticky
+ * bar with the wordmark, the pages and the "Book a table" button. Below
+ * 66rem the pages fold into a <details> menu (no JavaScript).
  */
 import '../styles/global.css';
 
 import {ClientRouter} from 'astro:transitions';
 
-import {NAV, SITE} from '../content/site';
+import {CAFE, FOOTER_NAV, HOURS_SHORT, NAV, SITE, fullAddress} from '../content/site';
 import {type JsonLd, jsonLdText, siteJsonLd} from '../lib/json-ld';
 import {absoluteUrl} from '../lib/site-url';
 
@@ -53,11 +57,12 @@ const {
   noindex = false,
   jsonLd,
 } = Astro.props;
-const fullTitle = title ? `${title} · ${SITE.name}` : SITE.name;
+const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · Bengali-fusion café in Dhanmondi, Dhaka`;
 const path = Astro.url.pathname;
 const canonical = noindex ? null : absoluteUrl(path);
 const socialImage = image ? absoluteUrl(image) : null;
 const active = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const onBookPage = path.startsWith('/book');
 // The home page tells search engines the site's name; other pages bring their own.
 const structured = [...(path === '/' ? [siteJsonLd()] : []), ...(jsonLd && !noindex ? [jsonLd] : [])];
 ---
@@ -84,19 +89,31 @@ const structured = [...(path === '/' ? [siteJsonLd()] : []), ...(jsonLd && !noin
     <meta name="twitter:title" content={title ?? SITE.name} />
     <meta name="twitter:description" content={description} />
     {socialImage && <meta name="twitter:image" content={socialImage} />}
-    <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f6f1e9" />
+    <link rel="preload" href="/fonts/young-serif-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/instrument-sans-var.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} blog`} href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} news`} href="/rss.xml" />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     {structured.map(data => <script type="application/ld+json" set:html={jsonLdText(data)} />)}
     <ClientRouter />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="topline">
+      <div class="wrap">
+        <p>{CAFE.street}, {CAFE.area}</p>
+        <p>{HOURS_SHORT.join(' · ')}</p>
+        <p><a href={CAFE.phoneHref}>Call {CAFE.phone}</a></p>
+      </div>
+    </div>
+
     <header class="site-header">
       <div class="wrap site-header-inner">
-        <a href="/" class="brand">{SITE.name}</a>
-        <nav class="site-nav" aria-label="Main">
+        <a href="/" class="brand" aria-current={path === '/' ? 'page' : undefined}>{SITE.name}</a>
+        <nav class="nav-desktop" aria-label="Main">
           {
             NAV.map(item => (
               <a href={item.href} data-astro-prefetch="viewport" aria-current={active(item.href) ? 'page' : undefined}>
@@ -105,6 +122,37 @@ const structured = [...(path === '/' ? [siteJsonLd()] : []), ...(jsonLd && !noin
             ))
           }
         </nav>
+        {
+          !onBookPage && (
+            <a class="button book-cta" href="/book/" data-astro-prefetch="viewport">
+              <span class="long">Book a table</span>
+              <span class="short">Book</span>
+            </a>
+          )
+        }
+        <details class="nav-toggle">
+          <summary aria-label="Site menu">
+            <svg class="icon-open" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M3 6h14M3 10h14M3 14h14"></path>
+            </svg>
+            <svg class="icon-close" viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <path d="M5 5l10 10M15 5L5 15"></path>
+            </svg>
+          </summary>
+          <nav class="nav-mobile" aria-label="Main">
+            <ul>
+              {
+                [{label: 'Home', href: '/'}, ...NAV, {label: 'Book a table', href: '/book/'}].map(item => (
+                  <li>
+                    <a href={item.href} aria-current={(item.href === '/' ? path === '/' : active(item.href)) ? 'page' : undefined}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+        </details>
       </div>
     </header>
 
@@ -113,12 +161,41 @@ const structured = [...(path === '/' ? [siteJsonLd()] : []), ...(jsonLd && !noin
     </main>
 
     <footer class="site-footer">
-      <div class="wrap site-footer-inner">
-        <span>© {new Date().getUTCFullYear()} {SITE.name}</span>
+      <div class="wrap">
+        <div class="footer-mast">
+          <p class="wordmark">{SITE.name}</p>
+          <p class="tagline">Bengali-fusion comfort food, specialty coffee and fresh bakes, on Road 27 in Dhanmondi.</p>
+        </div>
+        <dl class="footer-facts">
+          <div>
+            <dt>Find us</dt>
+            <dd>{fullAddress}</dd>
+            <dd><a href="/visit/">Map and directions</a></dd>
+          </div>
+          <div>
+            <dt>Opening hours</dt>
+            {HOURS_SHORT.map(line => <dd>{line}</dd>)}
+          </div>
+          <div>
+            <dt>Talk to us</dt>
+            <dd><a href={CAFE.phoneHref}>{CAFE.phone}</a> (call or WhatsApp)</dd>
+            <dd><a href={`mailto:${CAFE.email}`}>{CAFE.email}</a></dd>
+          </div>
+        </dl>
         <nav aria-label="Footer">
-          {NAV.map(item => <a href={item.href}>{item.label}</a>)}
-          <a href="/rss.xml">RSS</a>
+          <ul class="footer-links">
+            {FOOTER_NAV.map(item => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))}
+            <li><a href="/rss.xml">News feed (RSS)</a></li>
+          </ul>
         </nav>
+        <div class="fineprint">
+          <p>© {new Date().getUTCFullYear()} {SITE.name}, Dhanmondi, Dhaka</p>
+          <p>{CAFE.bookingPromise}</p>
+        </div>
       </div>
     </footer>
   </body>

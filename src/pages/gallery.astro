@@ -1,0 +1,163 @@
+---
+/**
+ * Gallery: a masonry grid of photos from src/content/gallery.json, filtered
+ * by Food / Space / People / Events. The filter is a radio group and CSS
+ * (`:has()`): no JavaScript, and every photo is in the HTML for search.
+ */
+import {Picture} from 'astro:assets';
+import {getCollection} from 'astro:content';
+
+import BookBlock from '../components/BookBlock.astro';
+import {GALLERY} from '../content/site';
+import Base from '../layouts/Base.astro';
+
+const photos = await getCollection('gallery');
+const FILTERS = [
+  {id: 'all', label: 'All'},
+  {id: 'food', label: 'Food'},
+  {id: 'space', label: 'Space'},
+  {id: 'people', label: 'People'},
+  {id: 'events', label: 'Events'},
+];
+---
+
+<Base title={GALLERY.title} description={GALLERY.description}>
+  <header class="wrap page-head">
+    <h1>{GALLERY.title}</h1>
+    <p class="lede">{GALLERY.lede}</p>
+  </header>
+
+  <div class="gallery wrap">
+    <fieldset class="filters">
+      <legend>Show</legend>
+      <div class="filter-options">
+        {
+          FILTERS.map(f => (
+            <span class="filter">
+              <input class="visually-hidden" type="radio" name="gallery-filter" id={`f-${f.id}`} value={f.id} checked={f.id === 'all'} />
+              <label for={`f-${f.id}`}>{f.label}</label>
+            </span>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <ul class="masonry">
+      {
+        photos.map((p, i) => (
+          <li class={`shot ${p.data.shape}`} data-cat={p.data.category}>
+            <Picture
+              src={p.data.photo}
+              alt={p.data.alt}
+              formats={['avif', 'webp']}
+              widths={[360, 560, 800]}
+              sizes="(min-width: 64rem) 380px, (min-width: 40rem) 48vw, calc(100vw - 32px)"
+              loading={i < 3 ? 'eager' : 'lazy'}
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <BookBlock title="See it in person." body="The light is best in the morning, the room is busiest on Friday nights. Book either." />
+</Base>
+
+<style>
+  .filters {
+    border: 0;
+    margin: 0 0 var(--space-xl);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .filters legend {
+    float: left;
+    margin-right: var(--space-sm);
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+
+  .filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .filter {
+    position: relative;
+  }
+
+  .filter label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-md);
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: var(--color-ink-2);
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+
+  .filter label:hover {
+    border-color: var(--color-ink);
+    color: var(--color-ink);
+  }
+
+  .filter input:checked + label {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .filter input:focus-visible + label {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  .masonry {
+    columns: 3 280px;
+    column-gap: var(--space-md);
+    margin: 0 0 var(--space-3xl);
+    padding: 0;
+    list-style: none;
+  }
+
+  .shot {
+    break-inside: avoid;
+    margin-bottom: var(--space-md);
+  }
+
+  .shot :global(img) {
+    width: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--color-paper-3);
+  }
+
+  .portrait :global(img) {
+    aspect-ratio: 4 / 5;
+  }
+
+  .landscape :global(img) {
+    aspect-ratio: 3 / 2;
+  }
+
+  .square :global(img) {
+    aspect-ratio: 1;
+  }
+
+  .gallery:has(#f-food:checked) .shot:not([data-cat='food']),
+  .gallery:has(#f-space:checked) .shot:not([data-cat='space']),
+  .gallery:has(#f-people:checked) .shot:not([data-cat='people']),
+  .gallery:has(#f-events:checked) .shot:not([data-cat='events']) {
+    display: none;
+  }
+</style>

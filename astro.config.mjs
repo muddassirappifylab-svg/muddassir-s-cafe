@@ -23,6 +23,8 @@ export default defineConfig({
   // Skipped on slow connections and with Data Saver. With the client router,
   // the site's only scripts: small deferred modules from 'self' (performance.md).
   prefetch: {prefetchAll: true, defaultStrategy: 'hover'},
+  // The old template's contact page now lives at /visit/ (a static redirect page, no server).
+  redirects: {'/contact': '/visit/'},
   // Directory URLs (`/about/`) with trailing slashes, as a static host serves them.
   trailingSlash: 'ignore',
   build: {
@@ -53,8 +55,9 @@ export default defineConfig({
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self' mailto:",
-        // Video players a post may embed (an <iframe> in its Markdown).
-        'frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com',
+        // Video players a post may embed (an <iframe> in its Markdown), and
+        // the OpenStreetMap embed on /visit/.
+        'frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.openstreetmap.org',
       ],
     },
   },

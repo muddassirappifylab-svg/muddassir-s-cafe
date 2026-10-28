@@ -1,23 +1,220 @@
 ---
-import Base from '../layouts/Base.astro';
+/**
+ * About: Muddassir's note, the team (src/content/team.json) and a short
+ * timeline. Words in ABOUT in src/content/site.ts.
+ */
+import {Picture} from 'astro:assets';
+import {getCollection} from 'astro:content';
+
+import spacePlants from '../assets/photos/space-plants.jpg';
+import BookBlock from '../components/BookBlock.astro';
 import {ABOUT} from '../content/site';
+import Base from '../layouts/Base.astro';
+
+const team = await getCollection('team');
+const founder = team.find(p => p.id === 'muddassir');
 ---
 
-<Base title={ABOUT.title} description={ABOUT.lede}>
-  <article class="wrap narrow section">
+<Base title={ABOUT.title} description={ABOUT.description}>
+  <header class="wrap page-head">
     <h1>{ABOUT.title}</h1>
     <p class="lede">{ABOUT.lede}</p>
+  </header>
+
+  <section class="wrap note" aria-labelledby="note-title">
     {
-      ABOUT.sections.map(section => (
-        <section class="prose-section">
-          <h2>{section.heading}</h2>
-          <p>{section.body}</p>
-        </section>
-      ))
+      founder && (
+        <Picture
+          class="note-photo"
+          src={founder.data.photo}
+          alt={founder.data.photoAlt}
+          formats={['avif', 'webp']}
+          widths={[320, 560]}
+          sizes="(min-width: 52rem) 280px, 60vw"
+          loading="eager"
+        />
+      )
     }
-    <div class="actions">
-      <a class="button" href="/contact/">Get in touch</a>
-      <a class="button ghost" href="/blog/">Read the blog</a>
+    <div class="note-body">
+      <h2 id="note-title">A note from Muddassir</h2>
+      {ABOUT.founderNote.map(p => <p>{p}</p>)}
+      <p class="sign">— {ABOUT.founderSign}</p>
     </div>
-  </article>
+  </section>
+
+  <figure class="wide wrap">
+    <Picture src={spacePlants} alt="A bright corner of the café with plants, a long counter and mismatched chairs." formats={['avif', 'webp']} widths={[640, 1000, 1400]} sizes="(min-width: 1180px) 1180px, calc(100vw - 32px)" />
+  </figure>
+
+  <section class="wrap section" aria-labelledby="team-title">
+    <h2 id="team-title">The people behind the counter</h2>
+    <ul class="team">
+      {
+        team.map(person => (
+          <li class="person">
+            <Picture
+              src={person.data.photo}
+              alt={person.data.photoAlt}
+              formats={['avif', 'webp']}
+              widths={[300, 500]}
+              sizes="(min-width: 64rem) 270px, (min-width: 36rem) 45vw, calc(100vw - 32px)"
+            />
+            <h3>{person.data.name}</h3>
+            <p class="role">{person.data.role}</p>
+            <p class="fact">{person.data.fact}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="timeline-wrap" aria-labelledby="timeline-title">
+    <div class="wrap section">
+      <h2 id="timeline-title">How we got here</h2>
+      <ol class="timeline">
+        {
+          ABOUT.timeline.map(step => (
+            <li>
+              <p class="year tabular">{step.year}</p>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <BookBlock title="Come and say hello." />
 </Base>
+
+<style>
+  .note {
+    display: grid;
+    gap: var(--space-xl);
+    padding-bottom: var(--space-3xl);
+  }
+
+  .note :global(.note-photo) {
+    width: min(280px, 70%);
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  .note-body {
+    max-width: var(--measure);
+  }
+
+  .note-body p {
+    font-size: var(--text-lg);
+    line-height: 1.6;
+  }
+
+  .sign {
+    font-family: var(--font-display);
+    font-size: var(--text-xl) !important;
+    color: var(--color-accent-deep);
+  }
+
+  @media (min-width: 52rem) {
+    .note {
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: var(--space-3xl);
+      align-items: start;
+    }
+
+    .note :global(.note-photo) {
+      width: 100%;
+      position: sticky;
+      top: 100px;
+    }
+  }
+
+  .wide {
+    margin: 0 auto;
+  }
+
+  .wide :global(img) {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  .team {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+    gap: var(--space-2xl) var(--space-lg);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .person :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+  }
+
+  .person h3 {
+    font-size: var(--text-xl);
+    margin: 0;
+  }
+
+  .role {
+    margin: 0 0 var(--space-xs);
+    color: var(--color-accent-deep);
+    font-weight: 600;
+  }
+
+  .fact {
+    margin: 0;
+    color: var(--color-ink-2);
+  }
+
+  .timeline-wrap {
+    background: var(--color-paper-2);
+  }
+
+  .timeline {
+    display: grid;
+    gap: var(--space-xl);
+    margin: var(--space-xl) 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .timeline li {
+    border-top: 2px solid var(--color-ink);
+    padding-top: var(--space-md);
+  }
+
+  .year {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    color: var(--color-accent-deep);
+    line-height: 1;
+    margin: 0 0 var(--space-sm);
+  }
+
+  .timeline h3 {
+    margin-bottom: var(--space-xs);
+  }
+
+  .timeline p:last-child {
+    margin: 0;
+    color: var(--color-ink-2);
+    max-width: 40ch;
+  }
+
+  @media (min-width: 52rem) {
+    .timeline {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-xl);
+    }
+  }
+</style>

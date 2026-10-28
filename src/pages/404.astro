@@ -3,14 +3,22 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Page not found" noindex>
-  <section class="wrap narrow section center">
-    <p class="eyebrow">404</p>
-    <h1>This page doesn't exist</h1>
-    <p class="lede">The link may be old, or the address mistyped.</p>
+<Base title="Page not found" description="This page doesn’t exist at Muddassir’s Café." noindex>
+  <section class="wrap narrow section">
+    <p class="hand lost">hmm, not on the menu</p>
+    <h1>We couldn’t find that page.</h1>
+    <p class="lede">The link may be old, or the address mistyped. Here’s where most people are headed:</p>
     <div class="actions">
-      <a class="button" href="/">Go to the home page</a>
-      <a class="button ghost" href="/blog/">Read the blog</a>
+      <a class="button" href="/menu/">See the menu</a>
+      <a class="button ghost" href="/book/">Book a table</a>
+      <a class="button ghost" href="/">Home page</a>
     </div>
   </section>
 </Base>
+
+<style>
+  .lost {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-xs);
+  }
+</style>

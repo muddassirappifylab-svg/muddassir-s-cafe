@@ -1,4 +1,4 @@
-import {SITE} from '../content/site';
+import {CAFE, HOURS, SITE} from '../content/site';
 import {absoluteUrl, siteOrigin} from './site-url';
 
 /**
@@ -48,6 +48,44 @@ export function siteJsonLd(): JsonLd {
         ...(home && {url: home}),
       },
     ],
+  };
+}
+
+/**
+ * The café itself (`CafeOrCoffeeShop`): address, map pin, phone and opening
+ * hours, from `CAFE` and `HOURS` in src/content/site.ts. Used on the home and
+ * Visit pages, which both show these facts.
+ */
+export function cafeJsonLd(): JsonLd {
+  const home = absoluteUrl('/');
+  const id = ids();
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CafeOrCoffeeShop',
+    ...(id && {'@id': `${id.organization.replace('#organization', '#cafe')}`}),
+    name: SITE.name,
+    description: SITE.description,
+    ...(home && {url: home}),
+    telephone: CAFE.phone.replace(/[^\d+]/g, ''),
+    email: CAFE.email,
+    servesCuisine: ['Bengali', 'Fusion', 'Café'],
+    priceRange: 'BDT 120–650',
+    acceptsReservations: true,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: CAFE.street,
+      addressLocality: `${CAFE.area}, ${CAFE.city}`,
+      postalCode: CAFE.postcode,
+      addressCountry: CAFE.country,
+    },
+    geo: {'@type': 'GeoCoordinates', latitude: CAFE.lat, longitude: CAFE.lng},
+    openingHoursSpecification: HOURS.map(h => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: days[h.day],
+      opens: h.open,
+      closes: h.close,
+    })),
   };
 }
 

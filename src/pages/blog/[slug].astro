@@ -7,6 +7,7 @@
 import {getImage} from 'astro:assets';
 import {render} from 'astro:content';
 
+import BookBlock from '../../components/BookBlock.astro';
 import Cover from '../../components/Cover.astro';
 import Base from '../../layouts/Base.astro';
 import {postJsonLd} from '../../lib/json-ld';
@@ -27,9 +28,9 @@ const jsonLd = postJsonLd({path: `/blog/${post.id}/`, title, description, publis
 ---
 
 <Base title={title} description={description} image={image} imageAlt={coverAlt} type="article" publishedAt={publishedAt} updatedAt={updatedAt} jsonLd={jsonLd}>
-  <article class="wrap narrow section post">
+  <article class="narrow section post">
     <header>
-      <p class="eyebrow"><a href="/blog/">Blog</a></p>
+      <p><a href="/blog/">News</a></p>
       <h1>{title}</h1>
       <p class="meta">
         <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
@@ -47,13 +48,14 @@ const jsonLd = postJsonLd({path: `/blog/${post.id}/`, title, description, publis
           <ul class="chips">
             {tags.map(tag => (
               <li>
-                <a class="chip" href={tagHref(tag)}>#{tag}</a>
+                <a class="chip" href={tagHref(tag)}>{tag}</a>
               </li>
             ))}
           </ul>
         </nav>
       )
     }
-    <p><a href="/blog/">← All posts</a></p>
+    <p><a href="/blog/">← All news</a></p>
   </article>
+  <BookBlock />
 </Base>

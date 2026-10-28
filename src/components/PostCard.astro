@@ -1,5 +1,5 @@
 ---
-/** One post in a list. Fixed image box (no layout shift), lazy image unless `eager`. */
+/** One news post in a list: date, headline, a two-line teaser and "Read more". Fixed image box (no layout shift). */
 import {type BlogPost, formatDate, postHref} from '../lib/posts';
 import Cover from './Cover.astro';
 
@@ -9,26 +9,18 @@ interface Props {
   as?: 'h2' | 'h3';
   /** Load the cover at once (cards above the fold). */
   eager?: boolean;
+  /** Show the cover photo (the home page's short list leaves it out). */
+  showCover?: boolean;
 }
 
-const {post, as: Heading = 'h3', eager = false} = Astro.props;
-const {title, description, publishedAt, author, cover, coverAlt} = post.data;
+const {post, as: Heading = 'h3', eager = false, showCover = true} = Astro.props;
+const {title, description, publishedAt, cover, coverAlt} = post.data;
 ---
 
 <a class="post-card" href={postHref(post)}>
-  {
-    cover ? (
-      <Cover class="cover" src={cover} alt={coverAlt} width={640} height={360} sizes="(min-width: 1100px) 350px, (min-width: 640px) 50vw, 100vw" eager={eager} />
-    ) : (
-      <span class="cover cover-empty" aria-hidden="true" />
-    )
-  }
-  <div class="post-card-body">
-    <Heading class="post-card-title">{title}</Heading>
-    <p class="muted small">{description}</p>
-    <p class="meta">
-      <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
-      {author && <> · {author}</>}
-    </p>
-  </div>
+  {showCover && cover && <Cover class="cover" src={cover} alt={coverAlt} width={600} height={400} sizes="(min-width: 1180px) 370px, (min-width: 700px) 45vw, calc(100vw - 32px)" eager={eager} />}
+  <p class="meta"><time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time></p>
+  <Heading class="post-card-title">{title}</Heading>
+  <p class="teaser">{description}</p>
+  <span class="more" aria-hidden="true">Read more →</span>
 </a>
